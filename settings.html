@@ -1,0 +1,68 @@
+<html><head>
+    <title>Settings - Arc</title>
+    <link rel="stylesheet" type="text/css" href="settings.css">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head><body>
+    <script src="settings.js" type="module"></script>
+    
+    
+    <div id="header">
+        <table>
+            <tbody>
+                <tr>
+                <td width="88.25%">
+                    <h2>Arc</h2>
+                </td>
+                <td>
+                    <p id="username">Jossaya Camille</p>
+                </td>
+                <td>
+                    <a href="dashboard">Dashboard</a>
+                </td>
+                <td><a href="javascript:logout()">Sign out</a></td>
+</tr>
+            </tbody>
+        </table>
+</div>
+<div id="container" class="container">
+<div id="main" class="box">
+<section id="open-section">
+        <h1>Settings</h1>
+        <h4>Manage your account</h4>
+    
+    </section>
+    
+
+<section id="tab-section">
+<div class="tabs">
+    <button class="tablinks" onclick="arc_direct()" id="defaultOpen">Direct messaging</button>
+    <button class="tablinks" onclick="arc_push()">Push notifications
+    </button>
+    <button class="tablinks" onclick="manage_acc()">Manage your account</button></div>
+
+<div class="tab-content" id="direct">
+    <script>
+        document.getElementById("defaultOpen").click()
+    </script>
+    <h1>Arc Direct</h1>
+    
+    <p>Arc Direct is a specialized form of Arc that uses a customized version of Arc and Arc Push (the direct messaging service) in order to provide a direct messaging experience for users. Arc Push must be enabled to use this feature. </p>
+<p id="direct-status">Currently, you do not have Arc Direct enabled. Click the button below to enable it.</p><button onclick="enable_direct()" id="enable-direct-btn">Enable Arc Direct</button></div>
+    <div class="tab-content" id="push">
+    
+    <h1>Arc Push</h1>
+    
+    <p>Arc Push is the push notification service for Arc and its associated services. Arc Push can be enabled on a server-by-server basis, but must first be enabled here. Enabling Arc Push on mobile devices requires Arc to first be installed as a web app.</p>
+<p id="push-status">Currently, you do not have Arc Push enabled. Click the button below to enable it.</p><button onclick="enable_push()" id="enable-push-btn">Enable Arc Push</button></div><div class="tab-content" id="manage">
+    
+    <h1>Manage your Arc account</h1>
+    
+    <p>This is Arc's account management area.</p>
+<button onclick="delete_acct()" id="enable-push-btn">Enable Arc Push</button></div></section></div> <!-- end box -->
+<div id="add-arcs" class="box overlay" style="color: white;background-color: black;visibility: hidden;"></div> <!-- end overlay -->
+</div> <!-- end container -->
+
+
+</body></html>
