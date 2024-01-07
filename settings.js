@@ -21,6 +21,7 @@ var user_email;
   const database = getDatabase(app);
   const auth = getAuth(app);
   const dbRef = ref(getDatabase());
+	const messaging = getMessaging(app);
 
 function logout() {
   signOut(auth).then(() => {
@@ -73,8 +74,7 @@ function disable_push() {
   status.innerHTML = "<p style='color: green'>Currently, you do not have Arc Push enabled. Click the button below to enable it.</p>";                                
   btn.innerHTML = "Enable Arc Push";
   div.innerHTML += "Arc Push successfully disabled.";
-	});
-}
+	}
 window.disable_push = disable_push;
 
 function enable_push() {
@@ -91,7 +91,7 @@ function enable_push() {
 	if(currentToken) {
 		console.log(currentToken);
 		set(ref(database, "/push/users/" + uid), {token: currentToken});
-			}  
+		}  
 	else {
     push_button.remove();
     let div = document.getElementById("push");
@@ -112,10 +112,9 @@ onAuthStateChanged(auth, (user) => {
     console.log(user);
     uid = user.uid;
     user_email = user.email;
-
    }
     // ...
-  } else {
+  else {
     window.location.href = "login.html";
     // ...
   }
