@@ -135,8 +135,8 @@ window.enable_push = enable_push;
 
 function enable_direct() {
   get(child(dbRef, "/push/users/" + uid)).then((snapshot) => {
+    let success = document.getElementById("direct-success");
     if(snapshot.val() != null) {
-      let success = document.getElementById("direct-success");
       let data = snapshot.val();
       let token = data.token;
       set(ref(database, "/push/direct/" + uid), {token: token});
