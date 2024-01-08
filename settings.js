@@ -179,6 +179,7 @@ onAuthStateChanged(auth, (user) => {
     console.log(user);
     uid = user.uid;
     display_name = user.displayName;
+    document.getElementById("username").innerHTML = display_name;
     user_email = user.email;
     arc_direct();
     let name_input = document.getElementById("display-name");
