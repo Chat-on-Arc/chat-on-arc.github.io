@@ -82,7 +82,7 @@ console.log(user_list[n]);
     console.log(user_email);
    console.log(e);
    if(user_email === e) {
-     new_user_uid = user_list[n];
+     let new_user_uid = user_list[n];
      console.log("Match found!");
      return new_user_uid;
    }
