@@ -72,6 +72,90 @@ function create_an_arc() {
    
 }
 window.create_an_arc = create_an_arc;
+function email_exists(e,data) {
+  console.log(data);
+  let user_list = Object.keys(data);
+console.log(user_list);
+  for(let n = 0; n < user_list.length; n++) {
+console.log(user_list[n]);
+   let user_email = data[user_list[n]].basic_info.email;
+    console.log(user_email);
+   console.log(e);
+   if(user_email === e) {
+     new_user_uid = user_list[n];
+     console.log("Match found!");
+     return new_user_uid;
+   }
+   else {
+    continue;
+   }
+  }
+return false;
+}
+var other_uid;
+var direct_id;
+function direct_async(e) {
+  set(ref("/push/direct/" + uid + "/conversations/" + direct_id), {people: [uid, other_uid]});
+  let token_key = push(child(ref(database, "/push/tokens"), 'tokens')).key;
+  let data = e.val()
+  let token = data.token;
+  set(ref(database, "/push/tokens" + token_key), {token: token, channel_id: direct_id})
+}
+function direct_async_2(e) {
+  set(ref("/push/direct/" + other_uid + "/conversations/" + direct_id), {people: [other_uid, uid]});
+  let token_key = push(child(ref(database, "/push/tokens"), 'tokens')).key;
+  let data = e.val()
+  let token = data.token;
+  set(ref(database, "/push/tokens" + token_key), {token: token, channel_id: direct_id})
+}
+
+async function get_token(e) {
+  let data = e.val();
+  let email = document.getElementById("email-input").value;
+  other_uid = email_exists(email, data);
+  if (other_uid != false) {
+   await get(child(dbRef, "/push/users/" + uid)).then(direct_async);
+   await get(child(dbRef, "/push/users/" + other_uid)).then(direct_async_2);
+   console.log("Registration complete");
+  }
+  else {
+    var div = document.getElementById("add-arcs");
+    let error = document.createElement("p");
+    let error_text = document.createTextNode("The user " + added_email + " does not exist.");
+    error.appendChild(error_text);
+    error.style.color = "red";
+    div.appendChild(error);
+  }
+}
+
+async function create_direct() {
+  direct_id = Math.floor(Math.random()*99999);
+  await get(child(dbRef, "/users/")).then(get_token);
+  submit_direct(direct_id);
+}
+window.create_direct = create_direct;
+function submit_direct(id) {
+  let admin = [user_email];   
+  set(ref(database, "/channel/" + id + "/members/"),{admin: admin});
+  set(ref(database, "/channel/" + id + "/basic_data"), {name: "DM conversation"});
+  var url = new URL("https://chat-by-arc.github.io/channel");
+  url.searchParams.append('channel_id', channel_id);
+  console.log(url);
+  window.location.href = url;
+ }
+
+function new_direct() {
+  var div = document.getElementById("add-arcs");
+  div.style.visibility = "visible";
+  div.innerHTML = "<div style='padding: 10px;'>" + 
+  "<h1>New conversation</h1>" + 
+  "<h4>User email</h4>" + 
+  "<input type='text' id='email-input'></input>" + 
+  '<button onclick="create_direct()">Submit</button>'+
+  '<button onclick="cancel()">Cancel</button>'+
+  '</div>';
+}
+window.new_direct = new_direct;
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -96,32 +180,37 @@ onAuthStateChanged(auth, (user) => {
      let data = snapshot.val();
      console.log(data);
      let arc_table = document.getElementById("channels-table");
-     arc_table.innerHTML = "";
-     for(let n = 0; n < Object.keys(data).length; n++) {
-      let arc_number = Object.keys(data)[n];
-      get(child(dbRef, '/channel/' + arc_number + "/basic_data")).then((snapshot) => {
-       let arc_data = snapshot.val()
-       let arc = document.createElement("div"); // add to arc_table
+     if(data != null) {
+      arc_table.innerHTML = "";
+      for(let n = 0; n < Object.keys(data).length; n++) {
+        let arc_number = Object.keys(data)[n];
+        get(child(dbRef, '/channel/' + arc_number + "/basic_data")).then((snapshot) => {
+        let arc_data = snapshot.val()
+        let arc = document.createElement("div"); // add to arc_table
        
-       arc.style.padding = "7px";
-       arc.style.background = "black";
+        arc.style.padding = "7px";
+        arc.style.background = "black";
        
-       let arc_container = document.createElement("div"); // add to arc
-       let arc_name = document.createElement("h3"); // add to arc container
-       let arc_name_node = document.createTextNode(arc_data.name); // add to arc_name
+        let arc_container = document.createElement("div"); // add to arc
+        let arc_name = document.createElement("h3"); // add to arc container
+        let arc_name_node = document.createTextNode(arc_data.name); // add to arc_name
        
-       arc_name.style.color = "white";
-       let join_arc = document.createElement("button"); // add to arc container
-       join_arc.innerHTML = "Go to arc";
-       join_arc.setAttribute("onclick","join(" + arc_number + ")");
+        arc_name.style.color = "white";
+        let join_arc = document.createElement("button"); // add to arc container
+        join_arc.innerHTML = "Go to arc";
+        join_arc.setAttribute("onclick","join(" + arc_number + ")");
 
-       arc_name.appendChild(arc_name_node);
-       arc_container.appendChild(arc_name);
-       arc_container.appendChild(join_arc);
-       arc.appendChild(arc_container);
-       arc_table.appendChild(arc);
+        arc_name.appendChild(arc_name_node);
+        arc_container.appendChild(arc_name);
+        arc_container.appendChild(join_arc);
+        arc.appendChild(arc_container);
+        arc_table.appendChild(arc);
       });
      }
+    }
+    else {
+      arc_table.innerHTML = "You are not in any Arcs. Create an arc or ask your friends to add you to one!"
+    }
     });
    }
     // ...
