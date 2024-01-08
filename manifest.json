@@ -7,7 +7,7 @@
   "orientation": "any",
   "scope": "/",
   "short_name": "Arc",
-  "start_url": "/arc",
+  "start_url": "/",
   "theme_color": "#0d16d4",
   "categories": [
     "social"
