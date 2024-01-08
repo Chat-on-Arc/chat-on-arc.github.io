@@ -1,7 +1,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, updateProfile} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
-import { getDatabase, set, ref, onValue, get, child, remove } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+import { getDatabase, set, ref, onValue, get, child, remove, push } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
 import { getMessaging, getToken, onMessage, deleteToken } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging.js";
 var uid;
 var user_email;
@@ -133,6 +133,46 @@ function enable_push() {
 }
 window.enable_push = enable_push;
 
+function enable_direct() {
+  get(child(dbRef, "/push/users/" + uid)).then((snapshot) => {
+    if(snapshot.val() != null) {
+      let success = document.getElementById("direct-success");
+      let data = snapshot.val();
+      let token = data.token;
+      set(ref(database, "/push/direct/" + uid), {token: token});
+      success.innerHTML = "Arc Direct successfully enabled!";
+      success.style.color = "green";
+    }
+    else {
+      success.style.color = "red";
+      success.innerHTML = "You do not have Arc Push enabled. Enable Arc Push, then enable Arc Direct.";
+    }
+  });
+}
+window.enable_direct = enable_direct;
+function unsubscribe(id) {
+  get(child(dbRef, "/push/users/" + uid)).then((snapshot) => {
+    let unsubscribe_key = push(child(ref(database, "/push/unsubscribe"), 'tokens')).key;
+    let data = snapshot.val()
+    let token = data.token;
+    set(ref(database, "/push/unsubscribe" + unsubscribe_key), {token: token, channel_id: id})
+  });
+}
+function disable_direct() {
+  let conversations;
+  get(child(dbRef, "/push/direct/" + uid + "/conversations")).then((snapshot) => {
+    let conversations = snapshot.val();
+
+    for(const conversation in conversations) {
+      unsubscribe(conversation);
+    }
+    let direct_ref = ref(database, "/push/direct/" + uid);
+    remove(direct_ref);
+  });
+  window.disable_direct = disable_direct;
+  
+  
+}
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -155,6 +195,14 @@ onAuthStateChanged(auth, (user) => {
         button.setAttribute("onclick", "disable_push()");
       }
     });
+  get(child(dbRef, "/push/direct/" + uid)).then((snapshot) => {
+    if(snapshot.val() != null) {
+        document.getElementById("direct-status").innerHTML = "Currently, you have Arc Push enabled. Click the button below to disable it."
+        let button = document.getElementById("enable-direct-btn");
+        button.innerHTML = "Disable Arc Direct";
+        button.setAttribute("onclick", "disable_direct()");
+    }
+  });
    }
     // ...
   else {
