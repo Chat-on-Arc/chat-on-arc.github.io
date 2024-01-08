@@ -95,14 +95,14 @@ return false;
 var other_uid;
 var direct_id;
 function direct_async(e) {
-  set(ref("/push/direct/" + uid + "/conversations/" + direct_id), {people: [uid, other_uid]});
+  set(ref(database, "/push/direct/" + uid + "/conversations/" + direct_id), {people: [uid, other_uid]});
   let token_key = push(child(ref(database, "/push/tokens"), 'tokens')).key;
   let data = e.val()
   let token = data.token;
   set(ref(database, "/push/tokens" + token_key), {token: token, channel_id: direct_id})
 }
 function direct_async_2(e) {
-  set(ref("/push/direct/" + other_uid + "/conversations/" + direct_id), {people: [other_uid, uid]});
+  set(ref(database, "/push/direct/" + other_uid + "/conversations/" + direct_id), {people: [other_uid, uid]});
   let token_key = push(child(ref(database, "/push/tokens"), 'tokens')).key;
   let data = e.val()
   let token = data.token;
