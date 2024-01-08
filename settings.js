@@ -197,7 +197,7 @@ onAuthStateChanged(auth, (user) => {
     });
   get(child(dbRef, "/push/direct/" + uid)).then((snapshot) => {
     if(snapshot.val() != null) {
-        document.getElementById("direct-status").innerHTML = "Currently, you have Arc Push enabled. Click the button below to disable it."
+        document.getElementById("direct-status").innerHTML = "Currently, you have Arc Direct enabled. Click the button below to disable it."
         let button = document.getElementById("enable-direct-btn");
         button.innerHTML = "Disable Arc Direct";
         button.setAttribute("onclick", "disable_direct()");
