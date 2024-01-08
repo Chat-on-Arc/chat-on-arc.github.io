@@ -1,10 +1,11 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
 import { getDatabase, set, ref, onValue, get, child } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
 import { getMessaging, getToken, onMessage, deleteToken } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging.js";
 var uid;
 var user_email;
+var display_name;
 
  const firebaseConfig = {
   apiKey: "AIzaSyC5oq9fyPeoo8jVU-N07gYhjt2kFEBGqA8",
@@ -21,7 +22,7 @@ var user_email;
   const database = getDatabase(app);
   const auth = getAuth(app);
   const dbRef = ref(getDatabase());
-	const messaging = getMessaging(app);
+  const messaging = getMessaging(app);
 
 function logout() {
   signOut(auth).then(() => {
@@ -32,6 +33,32 @@ function logout() {
   });
 }
 window.logout = logout;
+
+function submit_new_info() {
+	let name_input = document.getElementById("display-name");
+    	let email_input = document.getElementById("email-address");
+	let success = document.getElementById("sucess");
+	if(name_input.value != display_name) {
+		let user = auth.currentUser;
+		display_name = name_input.value;
+		updateProfile(user, {displayName: name_input.value}).catch((error) => {
+			success.style.color = "red";
+			success.innerHTML = "An error occured when saving your display name.";
+		});
+	}
+	if(email_input.value != user_email) {
+		let user = auth.currentUser;
+		user_email = email_input.value;
+		updateProfile(user, {email: user_email}).catch((error) => {
+			success.style.color = "red";
+			success.innerHTML = "An error occured when saving your email.";
+		});
+	}
+	console.log("Profile update complete.");
+	success.style.color = "green";
+	success.innerHTML = "Changes saved.";
+}
+window.submit_new_info = submit_new_info;
 
 function arc_direct() {
   let content = document.getElementById("direct");
@@ -111,6 +138,7 @@ onAuthStateChanged(auth, (user) => {
     // https://firebase.google.com/docs/reference/js/auth.user
     console.log(user);
     uid = user.uid;
+    display_name = user.displayName;
     user_email = user.email;
     arc_direct();
     let name_input = document.getElementById("display-name");
