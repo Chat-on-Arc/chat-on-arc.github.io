@@ -45,7 +45,7 @@ function submit() {
 window.submit = submit;
 
 function join(e) {
- var url = new URL("https://jcamille2023.github.io/arc/channel");
+ var url = new URL("https://chat-on-arc.github.io/channel");
  url.searchParams.append('channel_id', e);
  console.log(url);
  window.location.href = url;
