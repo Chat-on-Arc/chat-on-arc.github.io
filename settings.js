@@ -168,11 +168,9 @@ function disable_direct() {
     }
     let direct_ref = ref(database, "/push/direct/" + uid);
     remove(direct_ref);
-  });
-  window.disable_direct = disable_direct;
-  
-  
+  }); 
 }
+window.disable_direct = disable_direct;
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
