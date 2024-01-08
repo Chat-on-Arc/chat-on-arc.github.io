@@ -96,14 +96,14 @@ var other_uid;
 var direct_id;
 function direct_async(e) {
   set(ref(database, "/push/direct/" + uid + "/conversations/" + direct_id), {people: [uid, other_uid]});
-  let token_key = push(child(ref(database, "/push/tokens"), 'tokens')).key;
+  let token_key = push(child(ref(database, "/push/tokens/"), 'tokens')).key;
   let data = e.val()
   let token = data.token;
   set(ref(database, "/push/tokens" + token_key), {token: token, channel_id: direct_id})
 }
 function direct_async_2(e) {
   set(ref(database, "/push/direct/" + other_uid + "/conversations/" + direct_id), {people: [other_uid, uid]});
-  let token_key = push(child(ref(database, "/push/tokens"), 'tokens')).key;
+  let token_key = push(child(ref(database, "/push/tokens/"), 'tokens')).key;
   let data = e.val()
   let token = data.token;
   set(ref(database, "/push/tokens" + token_key), {token: token, channel_id: direct_id})
@@ -139,7 +139,7 @@ function submit_direct(id) {
   set(ref(database, "/channel/" + id + "/members/"),{admin: admin});
   set(ref(database, "/channel/" + id + "/basic_data"), {name: "DM conversation"});
   var url = new URL("https://chat-by-arc.github.io/channel");
-  url.searchParams.append('channel_id', channel_id);
+  url.searchParams.append('channel_id', id);
   console.log(url);
   window.location.href = url;
  }
