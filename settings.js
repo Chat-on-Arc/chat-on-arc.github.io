@@ -112,6 +112,11 @@ onAuthStateChanged(auth, (user) => {
     console.log(user);
     uid = user.uid;
     user_email = user.email;
+    arc_direct();
+    let name_input = document.getElementById("display-name");
+    name_input.value = user.displayName;
+    let email_input = document.getElementById("email");
+    email_input.value = user.email;
    }
     // ...
   else {
