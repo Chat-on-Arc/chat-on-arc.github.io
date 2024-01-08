@@ -72,3 +72,8 @@ section#tab-section {
     padding: 10px;
     display: none;
 }
+.manage-input {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+}
