@@ -1,7 +1,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, updateProfile} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
-import { getDatabase, set, ref, onValue, get, child } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+import { getDatabase, set, ref, onValue, get, child, remove } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
 import { getMessaging, getToken, onMessage, deleteToken } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging.js";
 var uid;
 var user_email;
@@ -95,6 +95,8 @@ window.delete_acc = delete_acc;
 
 function disable_push() {
 	deleteToken(messaging);
+  let token_ref = ref(database, "/push/users/" + uid);
+  remove(token_ref);
   let div = document.getElementById("push");
   let btn = document.getElementById("enable-push-btn");
   let status = document.getElementById("push-status");
@@ -145,6 +147,14 @@ onAuthStateChanged(auth, (user) => {
     name_input.value = user.displayName;
     let email_input = document.getElementById("email-address");
     email_input.value = user.email;
+    get(child(dbRef, "/push/users/" + uid)).then((snapshot) => {
+      if(snapshot.val() != null) {
+        document.getElementById("push-status").innerHTML = "Currently, you have Arc Push enabled. Click the button below to disable it."
+        let button = document.getElementById("enable-push-btn");
+        button.innerHTML = "Disable Arc Push";
+        button.setAttribute("onclick", "disable_push()");
+      }
+    });
    }
     // ...
   else {
