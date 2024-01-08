@@ -99,14 +99,14 @@ function direct_async(e) {
   let token_key = push(child(ref(database, "/push/tokens/"), 'tokens')).key;
   let data = e.val()
   let token = data.token;
-  set(ref(database, "/push/tokens/" + token_key), {token: token, channel: direct_id})
+  set(ref(database, "/push/tokens/" + token_key), {token: token, channel: String(direct_id)})
 }
 function direct_async_2(e) {
   set(ref(database, "/push/direct/" + other_uid + "/conversations/" + direct_id), {people: [other_uid, uid]});
   let token_key = push(child(ref(database, "/push/tokens/"), 'tokens')).key;
   let data = e.val()
   let token = data.token;
-  set(ref(database, "/push/tokens/" + token_key), {token: token, channel: direct_id})
+  set(ref(database, "/push/tokens/" + token_key), {token: token, channel: String(direct_id)})
 }
 
 async function get_token(e) {
