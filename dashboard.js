@@ -139,7 +139,7 @@ async function create_direct() {
   await get(child(dbRef, "/push/users/" + uid)).then(direct_async(uid,other_uid));
   await get(child(dbRef, "/push/users/" + other_uid)).then(direct_async(other_uid,uid));
   console.log("Registration complete!")
-  submit_direct(direct_id);
+  // submit_direct(direct_id);
 }
 window.create_direct = create_direct;
 function submit_direct(id) {
