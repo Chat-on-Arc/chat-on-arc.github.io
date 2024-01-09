@@ -94,29 +94,20 @@ return false;
 }
 var other_uid;
 var direct_id;
-function direct_async(e) {
-  set(ref(database, "/push/direct/" + uid + "/conversations/" + direct_id), {people: [uid, other_uid]});
-  let token_key = push(child(ref(database, "/push/tokens/"), 'tokens')).key;
-  let data = e.val()
-  let token = data.token;
-  set(ref(database, "/push/tokens/" + token_key), {token: token, channel: String(direct_id)})
-}
-function direct_async_2(e) {
-  set(ref(database, "/push/direct/" + other_uid + "/conversations/" + direct_id), {people: [other_uid, uid]});
+async function direct_async(vuser, nuser, e) {
+  set(ref(database, "/push/direct/" + vuser + "/conversations/" + direct_id), {people: [vuser, nuser]});
   let token_key = push(child(ref(database, "/push/tokens/"), 'tokens')).key;
   let data = e.val()
   let token = data.token;
   set(ref(database, "/push/tokens/" + token_key), {token: token, channel: String(direct_id)})
 }
 
-async function get_token(e) {
+async function get_uid(e) {
   let data = e.val();
   let email = document.getElementById("email-input").value;
   other_uid = email_exists(email, data);
   if (other_uid != false) {
-   await get(child(dbRef, "/push/users/" + uid)).then(direct_async);
-   await get(child(dbRef, "/push/users/" + other_uid)).then(direct_async_2);
-   console.log("Registration complete");
+   return other_uid;
   }
   else {
     var div = document.getElementById("add-arcs");
@@ -130,7 +121,24 @@ async function get_token(e) {
 
 async function create_direct() {
   direct_id = Math.floor(Math.random()*99999);
-  await get(child(dbRef, "/users/")).then(get_token);
+  let other_uid = await get(child(dbRef, "/users/")).then(get_uid);
+  await get(child(dbRef,"/push/direct/" + uid + "/conversations/")).then((snapshot) => {
+    let conversations = snapshot.val();
+    for (conversation in conversations) {
+      console.log(conversation);
+      let list = conversations[conversation].people;
+      if (list.includes(other_uid)) {
+        join(conversation);
+        break;
+      }
+      else {
+        continue;
+      }
+    }
+  });
+  await get(child(dbRef, "/push/users/" + uid)).then(direct_async(uid,other_uid));
+  await get(child(dbRef, "/push/users/" + other_uid)).then(direct_async(other_uid,uid));
+  console.log("Registration complete!")
   submit_direct(direct_id);
 }
 window.create_direct = create_direct;
