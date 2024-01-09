@@ -95,7 +95,7 @@ return false;
 var other_uid;
 var direct_id;
 async function direct_async(vuser, nuser, e) {
-  set(ref(database, "/push/direct/" + vuser + "/conversations/" + direct_id), {people: [vuser, nuser]});
+  await set(ref(database, "/push/direct/" + vuser + "/conversations/" + direct_id), {people: [vuser, nuser]});
   let token_key = push(child(ref(database, "/push/tokens/"), 'tokens')).key;
   let data = e.val()
   let token = data.token;
@@ -124,7 +124,7 @@ async function create_direct() {
   let other_uid = await get(child(dbRef, "/users/")).then(get_uid);
   await get(child(dbRef,"/push/direct/" + uid + "/conversations/")).then((snapshot) => {
     let conversations = snapshot.val();
-    for (conversation in conversations) {
+    for (const conversation in conversations) {
       console.log(conversation);
       let list = conversations[conversation].people;
       if (list.includes(other_uid)) {
