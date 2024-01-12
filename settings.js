@@ -94,9 +94,22 @@ function delete_acc() {
 window.delete_acc = delete_acc;
 
 function disable_push() {
-	deleteToken(messaging);
-  let token_ref = ref(database, "/push/users/" + uid);
-  // remove(token_ref);
+  get(child(dbRef,"/push/users/" + uid + "/tokens/tokens")).then((snapshot) => {
+    let data = snapshot.val();
+    if(data == null) {
+      let ref = ref(database, "/push/users/" + uid + "/tokens/")
+      remove(ref);
+      
+      
+    }
+    else {
+      let token;
+      let index = data.indexOf(token);
+      data.slice(index,1);
+    }
+    deleteToken(messaging);
+  });
+
   let div = document.getElementById("push");
   let btn = document.getElementById("enable-push-btn");
   let status = document.getElementById("push-status");
@@ -203,14 +216,6 @@ onAuthStateChanged(auth, (user) => {
     name_input.value = user.displayName;
     let email_input = document.getElementById("email-address");
     email_input.value = user.email;
-    get(child(dbRef, "/push/users/" + uid)).then((snapshot) => {
-      if(snapshot.val() != null) {
-        document.getElementById("push-status").innerHTML = "Currently, you have Arc Push enabled. Click the button below to disable it."
-        let button = document.getElementById("enable-push-btn");
-        button.innerHTML = "Disable Arc Push";
-        button.setAttribute("onclick", "disable_push()");
-      }
-    });
       if(Notification.permission == "granted") {
         document.getElementById("direct-status").innerHTML = "Currently, you have Arc Direct enabled on this device. Click the button below to disable it."
         let button = document.getElementById("enable-direct-btn");

@@ -184,7 +184,7 @@ function requestPermission() {
 	document.getElementById("arc-push").setAttribute("onclick","unsubscribe()");
 
   });
-  get(child(dbRef,"/channel/" + channel_id + "/push/")).then((snapshot) => {
+  get(child(dbRef,"/channel/" + channel_id + "/push/push")).then((snapshot) => {
 	let data = snapshot.val();
 	if (data != null) {
 		data = data.push;

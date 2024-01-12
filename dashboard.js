@@ -99,7 +99,7 @@ async function direct_async(vuser, nuser, e) {
   await set(ref(database, "/push/direct/" + vuser + "/conversations/" + direct_id), {people: [vuser, nuser]});
   let token_key = push(child(ref(database, "/push/tokens/"), 'tokens')).key;
   let data = e.val()
-  let token = data.token;
+  let token = data.tokens;
   set(ref(database, "/push/tokens/" + token_key), {token: token, channel: String(direct_id)})
 }
 
@@ -138,8 +138,8 @@ async function create_direct() {
       }
     }
   });
-  await get(child(dbRef, "/push/users/" + uid)).then((snapshot) => direct_async(uid,other_uid,snapshot));
-  await get(child(dbRef, "/push/users/" + other_uid)).then((snapshot) => direct_async(other_uid,uid,snapshot));
+  await get(child(dbRef, "/push/users/" + uid + "/tokens")).then((snapshot) => direct_async(uid,other_uid,snapshot));
+  await get(child(dbRef, "/push/users/" + other_uid + "/tokens")).then((snapshot) => direct_async(other_uid,uid,snapshot));
   console.log("Registration complete!")
   // submit_direct(direct_id);
 }
