@@ -162,10 +162,12 @@ get(child(dbRef, "/channel/" + channel_id + "/members/members")).then((snapshot)
 window.manage_users = manage_users;
 
 function unsubscribe() {
-	get(child(dbRef, "/push/tokens/" + uid + "/tokens/")).then((snapshot) => {
+	get(child(dbRef, "/push/users/" + uid + "/tokens/tokens")).then((snapshot) => {
 		let data = snapshot.val();
-		let token = data.tokens;
-		set(ref(database,"/push/unsubscribe/" + uid), {token: token, channel_id: channel_id});
+		console.log(data);
+		set(ref(database,"/push/unsubscribe/" + uid), {token: data, channel_id: channel_id});
+		document.getElementById("arc-push").innerHTML = "Enable notifications";
+		document.getElementById("arc-push").setAttribute("onclick","requestPermission()");
 	});
 }
 window.unsubscribe = unsubscribe;
@@ -429,15 +431,22 @@ onAuthStateChanged(auth, (user) => {
 		console.log(error);
      document.getElementById("main").innerHTML = "<h1>Error</h1><br><p>There was an error loading this channel.</p><a href='./dashboard.html'>Return to dashboard</a>";
 	});
-	get(child(dbRef,"/channel/" + channel_id + "/push/push/")).then((snapshot) => {
-		let data = snapshot.val();
-		if(data.includes(uid)) {
+	get(child(dbRef,"/push/users/" + uid + "/tokens")).then((token_check) => {
+		if(token_check != null) {
+			get(child(dbRef,"/channel/" + channel_id + "/push/push/")).then((snapshot) => {
+				let data = snapshot.val();
+				if(data.includes(uid)) {
+					let push_button = document.getElementById("arc-push");
+					push_button.innerHTML = "Disable notifications";
+					push_button.setAttribute("onclick","unsubscribe()");
+				}
+			});
+			}
+			else {
 			let push_button = document.getElementById("arc-push");
-			push_button.innerHTML = "Disable notifications";
-			push_button.setAttribute("onclick","unsubscribe()");
-		}
+			push_button.remove();
+			}
 	});
-	
 
     var data_ref = ref(database, "/channel/" + channel_id + "/basic_data/");
     onValue(data_ref, (snapshot) => {
