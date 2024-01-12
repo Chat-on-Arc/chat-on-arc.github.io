@@ -19,3 +19,8 @@ button:hover {
   color: black;
   background: white;
 }
+.pfp {
+  width: 50;
+  height: 50;
+  border-radius: 50%;
+}

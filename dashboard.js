@@ -4,6 +4,7 @@ import { getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/fir
 import { getDatabase, set, ref, onValue, get, child, push } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
 var uid;
 var user_email;
+var photoURL;
 
  const firebaseConfig = {
   apiKey: "AIzaSyC5oq9fyPeoo8jVU-N07gYhjt2kFEBGqA8",
@@ -173,6 +174,10 @@ onAuthStateChanged(auth, (user) => {
     // https://firebase.google.com/docs/reference/js/auth.user
     console.log(user);
     uid = user.uid;
+    photoURL = user.photoURL;
+    if(photoURL != null) {
+      document.getElementById("pfp").setAttribute("src",photoURL);
+    }
     user_email = user.email;
     document.getElementById("username").innerHTML = user.displayName;
     document.getElementById("user-greeting").innerHTML = "Hi, " + user.displayName + "!";
