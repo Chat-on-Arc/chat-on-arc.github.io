@@ -137,8 +137,8 @@ async function create_direct() {
       }
     }
   });
-  await get(child(dbRef, "/push/users/" + uid)).then(direct_async(uid,other_uid));
-  await get(child(dbRef, "/push/users/" + other_uid)).then(direct_async(other_uid,uid));
+  await get(child(dbRef, "/push/users/" + uid)).then((snapshot) => direct_async(uid,other_uid,snapshot));
+  await get(child(dbRef, "/push/users/" + other_uid)).then((snapshot) => direct_async(other_uid,uid,e));
   console.log("Registration complete!")
   // submit_direct(direct_id);
 }
