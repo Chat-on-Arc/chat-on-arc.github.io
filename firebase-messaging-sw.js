@@ -19,14 +19,18 @@ messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   // Customize notification here
   channel_id = payload.data.channelId;
-  const notificationTitle = payload.data.displayName + ' in ' + payload.data.channel_name;
+  if(payload.data.type != null) {
+    const notificationTitle = payload.data.displayName + ' in ' + payload.data.channel_name;
+  }
+  else {
+    const notificationTitle = payload.data.displayName + " sent you a message"
+  }
   const notificationOptions = {
     body: payload.data.content,
     fcm_options: {
       link: "https://jcamille2023.github.io/arc/channel?channel_id=" + payload.data.channelId,
     },
   };
-
       self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
@@ -44,9 +48,9 @@ self.onnotificationclick = (event) => {
       })
       .then((clientList) => {
         for (const client of clientList) {
-          if (client.url === "/arc/channel?channel_id=" + channel_id && "focus" in client) return client.focus();
+          if (client.url === "/channel?channel_id=" + channel_id && "focus" in client) return client.focus();
         }
-        if (clients.openWindow) return clients.openWindow("/arc/channel?channel_id=" + channel_id);
+        if (clients.openWindow) return clients.openWindow("/channel?channel_id=" + channel_id);
       }),
   );
 };

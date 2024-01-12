@@ -436,9 +436,7 @@ onAuthStateChanged(auth, (user) => {
 			get(child(dbRef,"/channel/" + channel_id + "/push/push/")).then((snapshot) => {
 				let data = snapshot.val();
 				if(data.includes(uid)) {
-					let push_button = document.getElementById("arc-push");
-					push_button.innerHTML = "Disable notifications";
-					push_button.setAttribute("onclick","unsubscribe()");
+					requestPermission();
 				}
 			});
 			}
