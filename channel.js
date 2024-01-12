@@ -194,7 +194,7 @@ function requestPermission() {
 		data = [];
 		data.push(uid);
 	}
-	set(ref("/channel/" + channel_id + "/push/"), {push: data});
+	set(ref(database,"/channel/" + channel_id + "/push/"), {push: data});
   });
 }
 window.requestPermission = requestPermission; 
