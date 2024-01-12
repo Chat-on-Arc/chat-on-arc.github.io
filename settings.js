@@ -114,18 +114,36 @@ function enable_push() {
       console.log('Notification permission granted.');
       if (push_button) {
       	push_button.setAttribute("onclick","disable_push()");
-	push_button.innerHTML = "Disable Arc Push";
+	      push_button.innerHTML = "Disable Arc Push";
       }
 	getToken(messaging, {vapidKey: "BFN_4xdvMbKPLlLtMDMiD5gyRnO7dZVR-LQArRYxwuOn3dnZbF_XUbaw3g72p4-NsCyPE-xhYG8YpWHJ0r3goBk"}).then((currentToken) => {
 	if(currentToken) {
 		console.log(currentToken);
-		set(ref(database, "/push/users/" + uid), {token: currentToken});
+    get(child(dbRef,"/push/users/" + uid + "/tokens/")).then((snapshot) => {
+      let data = snapshot.val();
+      data = data.tokens;
+      if(data != null) {
+        data.push(currentToken);
+        set(ref(database, "/push/users/" + uid + "/tokens/"), {tokens: data});
+      }
+      else {
+        let data = [];
+        data.push(currentToken);
+        set(ref(database, "/push/users/" + uid + "/tokens/"), {tokens: data});
+      }
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('../firebase-messaging-sw.js').then((registration) => {console.log('Service Worker registered with scope:', registration.scope);}).catch((error) => 
+         {console.error('Service Worker registration failed:', error);});
+      }
+
+    });
+		
 		}  
 	else {
     push_button.remove();
     let div = document.getElementById("push");
     div.innerHTML += "<p style='color: red;'>You denied Arc permission to send notifications. Therefore, you must enable permissions again within the settings, then refresh the page.</p>"
-		console.log("no token");    
+		console.log("no token");
 	}
     });
     }
@@ -159,7 +177,6 @@ function unsubscribe(id) {
   });
 }
 function disable_direct() {
-  let conversations;
   get(child(dbRef, "/push/direct/" + uid + "/conversations")).then((snapshot) => {
     let conversations = snapshot.val();
 
@@ -194,15 +211,13 @@ onAuthStateChanged(auth, (user) => {
         button.setAttribute("onclick", "disable_push()");
       }
     });
-  get(child(dbRef, "/push/direct/" + uid)).then((snapshot) => {
-    if(snapshot.val() != null) {
-        document.getElementById("direct-status").innerHTML = "Currently, you have Arc Direct enabled. Click the button below to disable it."
+      if(Notification.permission == "granted") {
+        document.getElementById("direct-status").innerHTML = "Currently, you have Arc Direct enabled on this device. Click the button below to disable it."
         let button = document.getElementById("enable-direct-btn");
         button.innerHTML = "Disable Arc Direct";
         button.setAttribute("onclick", "disable_direct()");
-    }
-  });
-   }
+      }
+  }
     // ...
   else {
     window.location.href = "login.html";

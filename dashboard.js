@@ -147,7 +147,7 @@ function submit_direct(id) {
   let other_email = document.getElementById("email-input").value;
   let admin = [user_email, other_email];   
   set(ref(database, "/channel/" + id + "/members/"),{admin: admin});
-  set(ref(database, "/channel/" + id + "/basic_data"), {name: "DM conversation"});
+  set(ref(database, "/channel/" + id + "/basic_data"), {name: "DM conversation", type: "direct"});
   var url = new URL("https://chat-on-arc.github.io/channel");
   url.searchParams.append('channel_id', id);
   console.log(url);

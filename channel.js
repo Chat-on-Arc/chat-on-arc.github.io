@@ -162,61 +162,29 @@ get(child(dbRef, "/channel/" + channel_id + "/members/members")).then((snapshot)
 window.manage_users = manage_users;
 
 function unsubscribe() {
-	get(child(dbRef, "/push/tokens/" + uid)).then((snapshot) => {
+	get(child(dbRef, "/push/tokens/" + uid + "/tokens/")).then((snapshot) => {
 		let data = snapshot.val();
-		let token = data.token;
+		let token = data.tokens;
 		set(ref(database,"/push/unsubscribe/" + uid), {token: token, channel_id: channel_id});
 	});
 }
 window.unsubscribe = unsubscribe;
 function requestPermission() {
-  console.log('Requesting permission...');
-  Notification.requestPermission().then((permission) => {
-    if (permission === 'granted') {
-      console.log('Notification permission granted.');
-	let push_button = document.getElementById("arc-push");
-      if (push_button) {
-      	push_button.setAttribute("onclick","unsubscribe()");
-	push_button.innerHTML = "Disable notifications";
-      }
-	getToken(messaging, {vapidKey: "BFN_4xdvMbKPLlLtMDMiD5gyRnO7dZVR-LQArRYxwuOn3dnZbF_XUbaw3g72p4-NsCyPE-xhYG8YpWHJ0r3goBk"}).then((currentToken) => {
-	if(currentToken) {
-		console.log(currentToken);
-		set(ref(database, "/push/tokens/" + uid), {token: currentToken, channel: channel_id});
-		if ('serviceWorker' in navigator) {
- 		 navigator.serviceWorker.register('../firebase-messaging-sw.js').then((registration) => {console.log('Service Worker registered with scope:', registration.scope);}).catch((error) => 
-			 {console.error('Service Worker registration failed:', error);});
-		}
-			}  
-	else {
-		console.log("no token");    
-	}
-    });
-    }
-                                        });
+  get(child(dbRef,"/push/users/" + uid + "/tokens/")).then((snapshot) => {
+	let data = snapshot.val();
+	console.log(data);
+	let tokens = data.tokens;
+	set(ref(database,"/push/tokens/" + uid), {
+		tokens: tokens,
+		channel: channel_id,
+	});
+	document.getElementById("arc-push").innerHTML = "Disable notifications";
+	document.getElementById("arc-push").setAttribute("onclick","unsubscribe()");
+
+  });
 }
 window.requestPermission = requestPermission; 
 
-function enablePush() {
-	let enabled = true;
-	if (enabled) {
-		get(child(dbRef, "/channel/" + channel_id + "/push")).then((snapshot) => {
-			let data = snapshot.val();
-			if (data != null) {
-				data.push(uid);
-				set(ref(database, "/push/channels/" + channel_id), {channel_id: channel_id, push: true});
-				set(ref(database, "/channel/" + channel_id + "/push/"), data);
-				requestPermission();
-			}
-			else {
-				let data = [uid];
-				set(ref(database, "/channel/" + channel_id + "/push/"), data);
-				
-			}
-		});
-	} 
-}
-window.enablePush = enablePush;
 
 
 function get_date() {
@@ -310,7 +278,6 @@ function start_upload() {
 }
 window.start_upload = start_upload;
 function send() {
-  get(child(dbRef, "/push/channels/" + channel_id)).then((snapshot) => {
   	let message_id = Math.floor(Math.random()*1000000);
   	message_id = message_id + 1000000;
   	let content = document.getElementById("messagebox").value;
@@ -328,10 +295,7 @@ function send() {
 	  channel_id: channel_id,
   	};
   set(ref(database, "/channel/" + channel_id + "/messages/" + send_date + message_id), data);
-	  if(snapshot.val()) {
-		  set(ref(database, "/push/messages/" + send_date + message_id),data);
-	  }
-  });
+  set(ref(database, "/push/messages/" + send_date + message_id),data);
 }
 window.send = send;
 
@@ -398,6 +362,31 @@ async function append_people_typing(list) {
 	}
 }
 
+function get_name(e) {
+	let data = e.val();
+	return data.displayName;
+}
+
+function manage_direct() {
+	var div = document.getElementById("manage_users");
+  	div.style.visibility = "visible";
+  	div.innerHTML = "<div style='padding: 10px;'>" + 
+  "<button onclick='block()>Block this user</button></div>";
+}
+window.manage_direct = manage_direct;
+async function arc_direct(e) {
+	let data = e.val();
+	let people = data.people;
+	let other_uid = data[0];
+	document.getElementById("channel_name").innerHTML = get(child(dbRef,"/users/" + other_uid + "/basic_info")).then(get_name);
+    document.getElementById("title").innerHTML = get(child(dbRef,"/users/" + other_uid + "/basic_info")).then(get_name);
+	document.getElementById("arc-push").remove();
+	set(ref(database, "/push/channels/" + channel_id), {channel_id: channel_id, push: true});
+	let manage_button = document.getElementById("manage_button");
+	manage_button.innerHTML = "Manage this conversation";
+	manage_button.setAttribute("onclick","manage_direct()")
+
+}
 onAuthStateChanged(auth, (user) => {
   if (user) {
     // User is signed in, see docs for a list of available properties
@@ -406,6 +395,13 @@ onAuthStateChanged(auth, (user) => {
     uid = user.uid;
     display_name = user.displayName;
     document.getElementById("username").innerHTML = user.displayName;
+	get(child(dbRef, '/channel/' + channel_id + '/basic_data')).then((snapshot) => {
+		console.log(snapshot.val());
+		let data = snapshot.val();
+		if(data.type != null) {
+			get(child(dbRef,"/push/direct/" + uid + "/conversations/" + channel_id)).then(arc_direct);
+		}
+	});
    get(child(dbRef, '/channel/' + channel_id + '/messages')).then((snapshot) => {
       let data =  snapshot.val();
 	if (data != null) {
@@ -421,26 +417,15 @@ onAuthStateChanged(auth, (user) => {
 		console.log(error);
      document.getElementById("main").innerHTML = "<h1>Error</h1><br><p>There was an error loading this channel.</p><a href='./dashboard.html'>Return to dashboard</a>";
 	});
-    get(child(dbRef, '/channel/' + channel_id + '/members/admin')).then((snapshot) => { // Reference to Arc Push
-	    let data = snapshot.val();
-	    console.log(data);
-	    let push_button = document.getElementById("arc-push");
-	    let manage_button = document.getElementById("manage_button");
-	    if (Object.values(data).includes(user.email)) {
-		   // enablePush();
-	    } 
-	    else {
-		// push_button.style.display = "none";
-		manage_button.style.display = "none";
-	    }
-	    
-    });
+
     var data_ref = ref(database, "/channel/" + channel_id + "/basic_data/");
     onValue(data_ref, (snapshot) => {
       let data = snapshot.val();
-      document.getElementById("channel_name").innerHTML = data.name;
-      document.getElementById("title").innerHTML = data.name;
-      channel_name = data.name;
+	  if(data.name != "DM conversation") {
+      	document.getElementById("channel_name").innerHTML = data.name;
+      	document.getElementById("title").innerHTML = data.name;
+	  }
+	  channel_name = data.name;
     });
     var message_ref = ref(database, "/channel/" + channel_id + "/messages/");
     onChildAdded(message_ref, (snapshot) => {
