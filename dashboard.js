@@ -128,7 +128,8 @@ async function create_direct() {
       console.log(conversation);
       let list = conversations[conversation].people;
       if (list.includes(other_uid)) {
-        join(conversation);
+        console.log(list);
+        // join(conversation);
         break;
       }
       else {
