@@ -182,6 +182,18 @@ function requestPermission() {
 	document.getElementById("arc-push").setAttribute("onclick","unsubscribe()");
 
   });
+  get(child(dbRef,"/channel/" + channel_id + "/push/")).then((snapshot) => {
+	let data = snapshot.val();
+	if (data != null) {
+		data = data.push;
+		data.push(uid);
+	}
+	else {
+		data = [];
+		data.push(uid);
+	}
+	set(ref("/channel/" + channel_id + "/push/"), {push: data});
+  });
 }
 window.requestPermission = requestPermission; 
 
@@ -417,6 +429,15 @@ onAuthStateChanged(auth, (user) => {
 		console.log(error);
      document.getElementById("main").innerHTML = "<h1>Error</h1><br><p>There was an error loading this channel.</p><a href='./dashboard.html'>Return to dashboard</a>";
 	});
+	get(child(dbRef,"/channel/" + channel_id + "/push/push/")).then((snapshot) => {
+		let data = snapshot.val();
+		if(data.includes(uid)) {
+			let push_button = document.getElementById("arc-push");
+			push_button.innerHTML = "Disable notifications";
+			push_button.setAttribute("onclick","unsubscribe()");
+		}
+	});
+	
 
     var data_ref = ref(database, "/channel/" + channel_id + "/basic_data/");
     onValue(data_ref, (snapshot) => {
@@ -470,21 +491,6 @@ onAuthStateChanged(auth, (user) => {
 		let index = people_typing.indexOf(data[0]);
 		people_typing.splice(index,1);
 		append_people_typing(people_typing);
-	});
-	var push_ref = ref(database, "/push/channels/" + channel_id);
-	onValue(push_ref, (snapshot) => {
-		let data = snapshot.val();
-		if (data != null) {
-			get(child(dbRef, "/channel/" + channel_id + "/push")).then((snapshot) => {
-				let button = document.getElementById("arc-push");
-				let data2 = snapshot.val();
-				console.log(data2);
-				if (data2 != null && !(Object.values(data2).includes(uid))) {
-						button.style.display = "inline";
-						button.innerHTML = "Enable notifications";
-					}
-			});
-		}
 	});
 	    
     // ...

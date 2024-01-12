@@ -96,11 +96,11 @@ window.delete_acc = delete_acc;
 function disable_push() {
 	deleteToken(messaging);
   let token_ref = ref(database, "/push/users/" + uid);
-  remove(token_ref);
+  // remove(token_ref);
   let div = document.getElementById("push");
   let btn = document.getElementById("enable-push-btn");
   let status = document.getElementById("push-status");
-  status.innerHTML = "<p style='color: green'>Currently, you do not have Arc Push enabled. Click the button below to enable it.</p>";                                
+  status.innerHTML = "<p style='color: green'>Currently, you do not have Arc Push enabled on this device. Click the button below to enable it.</p>";                                
   btn.innerHTML = "Enable Arc Push";
   div.innerHTML += "Arc Push successfully disabled.";
 	}
@@ -121,8 +121,8 @@ function enable_push() {
 		console.log(currentToken);
     get(child(dbRef,"/push/users/" + uid + "/tokens/")).then((snapshot) => {
       let data = snapshot.val();
-      data = data.tokens;
       if(data != null) {
+        data = data.tokens;
         data.push(currentToken);
         set(ref(database, "/push/users/" + uid + "/tokens/"), {tokens: data});
       }
