@@ -20,7 +20,7 @@ messaging.onBackgroundMessage(function(payload) {
   // Customize notification here
   channel_id = payload.data.channelId;
   var notificationTitle;
-  if(payload.data.type != null) {
+  if(payload.data.type == null) {
     notificationTitle = payload.data.displayName + ' in ' + payload.data.channel_name;
   }
   else {
