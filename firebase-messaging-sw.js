@@ -32,9 +32,12 @@ messaging.onBackgroundMessage(function(payload) {
       link: "https://jcamille2023.github.io/arc/channel?channel_id=" + payload.data.channelId,
     },
   };
+  self.clients.get(id).then((client) => {
+    if(!(client.url === "/channel?channel_id=" + channel_id && "focus" in client)) {
       self.registration.showNotification(notificationTitle, notificationOptions);
+    }
+  });
 });
-
 
 self.onnotificationclick = (event) => {
   console.log("On notification click: ", event.notification.tag);
