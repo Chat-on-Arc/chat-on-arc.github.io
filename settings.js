@@ -148,6 +148,10 @@ function enable_push() {
         navigator.serviceWorker.register('../firebase-messaging-sw.js').then((registration) => {console.log('Service Worker registered with scope:', registration.scope);}).catch((error) => 
          {console.error('Service Worker registration failed:', error);});
       }
+      document.getElementById("push-status").innerHTML = "Currently, you have Arc Push enabled on this device. Click the button below to disable it."
+      let button = document.getElementById("enable-push-btn");
+      button.innerHTML = "Disable Arc Push";
+      button.setAttribute("onclick", "disable_push()");
 
     });
 		
@@ -217,11 +221,21 @@ onAuthStateChanged(auth, (user) => {
     let email_input = document.getElementById("email-address");
     email_input.value = user.email;
       if(Notification.permission == "granted") {
-        document.getElementById("direct-status").innerHTML = "Currently, you have Arc Direct enabled on this device. Click the button below to disable it."
-        let button = document.getElementById("enable-direct-btn");
-        button.innerHTML = "Disable Arc Direct";
-        button.setAttribute("onclick", "disable_direct()");
+        document.getElementById("push-status").innerHTML = "Currently, you have Arc Push enabled on this device. Click the button below to disable it."
+        let button = document.getElementById("enable-push-btn");
+        button.innerHTML = "Disable Arc Push";
+        button.setAttribute("onclick", "disable_push()");
       }
+      get(child(dbRef, "/push/direct/" + uid)).then((snapshot) => {
+        let data = snapshot.val();
+        if(data != null) {
+          document.getElementById("direct-status").innerHTML = "Currently, you have Arc Direct enabled. Click the button below to disable it."
+          let button = document.getElementById("enable-direct-btn");
+          button.innerHTML = "Disable Arc Direct";
+          button.setAttribute("onclick", "disable_direct()");
+
+        }
+      });
   }
     // ...
   else {

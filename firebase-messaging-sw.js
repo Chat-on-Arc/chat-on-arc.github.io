@@ -19,11 +19,12 @@ messaging.onBackgroundMessage(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   // Customize notification here
   channel_id = payload.data.channelId;
+  var notificationTitle;
   if(payload.data.type != null) {
-    const notificationTitle = payload.data.displayName + ' in ' + payload.data.channel_name;
+    notificationTitle = payload.data.displayName + ' in ' + payload.data.channel_name;
   }
   else {
-    const notificationTitle = payload.data.displayName + " sent you a message"
+    notificationTitle = payload.data.displayName + " sent you a message"
   }
   const notificationOptions = {
     body: payload.data.content,
