@@ -8,6 +8,7 @@ var new_user_uid;
 var display_name;
 var channel_name;
 var button;
+var photoURL;
 var people_typing = [];
 const searchParams = new URLSearchParams(window.location.search);
 const channel_id = searchParams.get('channel_id');
@@ -307,6 +308,7 @@ function send() {
 	  content: content,
 	  date: msg_date_2,
 	  channel_id: channel_id,
+	  photoURL: photoURL,
   	};
   set(ref(database, "/channel/" + channel_id + "/messages/" + send_date + message_id), data);
   set(ref(database, "/push/messages/" + send_date + message_id),data);
@@ -408,6 +410,10 @@ onAuthStateChanged(auth, (user) => {
     console.log(user);
     uid = user.uid;
     display_name = user.displayName;
+	photoURL = user.photoURL;
+	if(photoURL != null) {
+		setPicture(photoURL);
+	}
     document.getElementById("username").innerHTML = user.displayName;
 	get(child(dbRef, '/channel/' + channel_id + '/basic_data')).then((snapshot) => {
 		console.log(snapshot.val());

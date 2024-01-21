@@ -215,6 +215,10 @@ onAuthStateChanged(auth, (user) => {
     display_name = user.displayName;
     document.getElementById("username").innerHTML = display_name;
     user_email = user.email;
+    photoURL = user.photoURL;
+    if(photoURL != null) {
+      setPicture(photoURL);
+    }
     arc_direct();
     let name_input = document.getElementById("display-name");
     name_input.value = user.displayName;
