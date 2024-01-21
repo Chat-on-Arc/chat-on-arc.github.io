@@ -14,7 +14,7 @@ const firebaseConfig = {
 
 function setPicture(e) {
     let elements = document.getElementsByClassName("pfp")
-    for(let element in elements) {
+    for(let element = 0; element < elements.length; element++) {
         elements[element].setAttribute("src",e);
     }
 }
