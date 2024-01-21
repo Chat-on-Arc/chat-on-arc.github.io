@@ -176,7 +176,7 @@ onAuthStateChanged(auth, (user) => {
     uid = user.uid;
     photoURL = user.photoURL;
     if(photoURL != null) {
-      document.getElementById("pfp").setAttribute("src",photoURL);
+      setPicture(photoURL);
     }
     user_email = user.email;
     document.getElementById("username").innerHTML = user.displayName;

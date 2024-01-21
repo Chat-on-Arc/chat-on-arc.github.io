@@ -15,16 +15,6 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
   const storage = getStorage(app);
 
 
-function upload_image(path,file) {
-  const storageRef = ref(storage, path);
-  uploadBytes(storageRef, file).then((snapshot) => {
-    // console.log(snapshot.val());
-    console.log("Submission sucessfull!");
-  });
-}
-
-window.upload_image = upload_image;
-
 function download_image(element, parent, path) {
   const pathReference = ref(storage, path);
   let a_ele = document.createElement("a");
