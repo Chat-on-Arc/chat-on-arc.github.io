@@ -15,7 +15,7 @@ const firebaseConfig = {
 function setPicture(e) {
     let elements = document.getElementsByClassName("pfp");
     for(let element = 0; element < elements.length; element++) {
-        elements[element].style.background = "url(/assets/default_pfp.jpg)";
+        elements[element].style.background = "url("+ e + ")";
         elements[element].style.backgroundSize = "contain";
     }
 }
