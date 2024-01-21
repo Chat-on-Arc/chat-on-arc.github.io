@@ -59,7 +59,7 @@ async function submit_new_info() {
   if(file != null) {
     let path = "pfp/" + uid + "/" + file.name;
     upload_image(path,file);
-    let url = await get_url();
+    let url = await get_url(path);
     updateProfile(user, {photoURL: url}).catch((error) => {
 			success.style.color = "red";
 			success.innerHTML = "An error occured when saving your email.";

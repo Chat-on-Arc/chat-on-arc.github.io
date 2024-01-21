@@ -29,10 +29,9 @@ function upload_image(path,file) {
     console.log("Submission sucessfull!");
   });
 }
-
 window.upload_image = upload_image;
 
-async function get_url() {
+async function get_url(path) {
   const pathReference = ref(storage, path);
   await getDownloadURL(pathReference).then((url) => {
     return url;
