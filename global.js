@@ -33,6 +33,7 @@ function upload_image(path,file) {
 window.upload_image = upload_image;
 
 async function get_url() {
+  const pathReference = ref(storage, path);
   await getDownloadURL(pathReference).then((url) => {
     return url;
   });

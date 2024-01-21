@@ -57,7 +57,7 @@ async function submit_new_info() {
 		});
 	}
   if(file != null) {
-    let path = "pfp/" + uid + "/" + file[n].name;
+    let path = "pfp/" + uid + "/" + file.name;
     upload_image(path,file);
     let url = await get_url();
     updateProfile(user, {photoURL: url}).catch((error) => {
