@@ -34,7 +34,7 @@ function logout() {
 }
 window.logout = logout;
 
-function submit_new_info() {
+async function submit_new_info() {
 	let name_input = document.getElementById("display-name");
     	let email_input = document.getElementById("email-address");
 	let success = document.getElementById("sucess");
@@ -59,6 +59,11 @@ function submit_new_info() {
   if(file != null) {
     let path = "pfp/" + uid + "/" + file[n].name;
     upload_image(path,file);
+    let url = await get_url();
+    updateProfile(user, {photoURL: url}).catch((error) => {
+			success.style.color = "red";
+			success.innerHTML = "An error occured when saving your email.";
+		});
   }
 	console.log("Profile update complete.");
 	success.style.color = "green";

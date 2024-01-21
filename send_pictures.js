@@ -31,3 +31,4 @@ function download_image(element, parent, path) {
   
 }
 window.download_image = download_image;
+

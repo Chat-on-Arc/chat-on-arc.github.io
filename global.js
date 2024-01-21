@@ -31,3 +31,10 @@ function upload_image(path,file) {
 }
 
 window.upload_image = upload_image;
+
+async function get_url() {
+  await getDownloadURL(pathReference).then((url) => {
+    return url;
+  });
+}
+window.get_url = get_url;
