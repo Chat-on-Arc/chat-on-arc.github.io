@@ -13,9 +13,9 @@ const firebaseConfig = {
   const storage = getStorage(app);
 
 function setPicture(e) {
-    let elements = document.getElementsByClassName("pfp")
+    let elements = document.getElementsByClassName("pfp");
     for(let element = 0; element < elements.length; element++) {
-        elements[element].setAttribute("src",e);
+        elements[element].style.background = "/assets/default_pfp.jpg";
     }
 }
 window.setPicture = setPicture;

@@ -6,7 +6,7 @@ import { getMessaging, getToken, onMessage, deleteToken } from "https://www.gsta
 var uid;
 var user_email;
 var display_name;
-
+var photoURL; 
  const firebaseConfig = {
   apiKey: "AIzaSyC5oq9fyPeoo8jVU-N07gYhjt2kFEBGqA8",
   authDomain: "arc-by-insight.firebaseapp.com",
@@ -38,6 +38,8 @@ function submit_new_info() {
 	let name_input = document.getElementById("display-name");
     	let email_input = document.getElementById("email-address");
 	let success = document.getElementById("sucess");
+  let file = document.getElementById("file").files;
+  file = file[0];
 	if(name_input.value != display_name) {
 		let user = auth.currentUser;
 		display_name = name_input.value;
@@ -54,6 +56,10 @@ function submit_new_info() {
 			success.innerHTML = "An error occured when saving your email.";
 		});
 	}
+  if(file != null) {
+    let path = "pfp/" + uid + "/" + file[n].name;
+    upload_image(path,file);
+  }
 	console.log("Profile update complete.");
 	success.style.color = "green";
 	success.innerHTML = "Changes saved.";

@@ -253,7 +253,7 @@ function upload() {
 	for(let n = 0; n < file.length; n++) {
 		let date_for_data = new Date();
 		date_for_data = String(date_for_data);
-		let path = "users/" + uid + "/" + file[n].name;
+		let path = "channel/" + channel_id + "/" + file[n].name;
 		upload_image(path,file[n]);
 		let message_data = {
 			type: "image",
