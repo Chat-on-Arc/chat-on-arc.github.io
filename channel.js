@@ -10,7 +10,7 @@ var channel_name;
 var button;
 var photoURL;
 var people_typing = [];
-var msg_level;
+var index;
 const searchParams = new URLSearchParams(window.location.search);
 const channel_id = searchParams.get('channel_id');
  const firebaseConfig = {
@@ -404,7 +404,7 @@ async function arc_direct(e) {
 	manage_button.setAttribute("onclick","manage_direct()")
 
 }
-function load_more() {
+function load_prev(e) {
 
 }
 
@@ -413,6 +413,7 @@ function insert_load_more() {
 	let button = document.createElement("button");
 	button.addEventListener("onclick", load_prev(index));
 	button.appendChild(document.createTextNode("Load previous messages"));
+	message_box.appendChild(button);
 }
 onAuthStateChanged(auth, (user) => {
   if (user) {
@@ -424,7 +425,6 @@ onAuthStateChanged(auth, (user) => {
 	photoURL = user.photoURL;
 	index = 50;
 	let run = false;
-	insert_load_more()
 	if(photoURL != null) {
 		setPicture(photoURL);
 	}
@@ -479,41 +479,6 @@ onAuthStateChanged(auth, (user) => {
     onChildAdded(message_ref, (snapshot) => {
 	  if(run == false) {
 		run = true;
-		get(child(dbRef,"/channel/" + channel_id + "/messages/")).then((messages) => {
-			messages = messages.val();
-			let message_keys = Object.keys(messages);
-			if(message_keys.length > 50) {
-				insert_load_more();
-				message_keys.slice(messages_keys.length-50,message_keys.length);
-			}
-			let message_box = document.getElementById("msg-contain");
-			for(let n = 0; n < message_keys.length; n++) {
-				let message = messages[message_keys[n]];
-      			get(child(dbRef, "/users/" + message.creator + "/basic_info")).then((snapshot2) => {
-					let user_data = snapshot2.val();
-        			let date = new Date(message.date);
-        			let datetime = " | on " + String(date.getMonth()+1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()) + " at " + String(date.getHours()) + ":" + String(date.getMinutes());
-        			let box = document.createElement("div");
-        			box.setAttribute("class","message");
-        			let username_entry = document.createElement("h4");
-        			let textNode = document.createTextNode(user_data.displayName + datetime);
-        			username_entry.appendChild(textNode);
-        			box.appendChild(username_entry);
-					if (message.type == null) {
-        				let content = document.createElement("p");
-        				let textNode2 = document.createTextNode(message.content);
-        				content.appendChild(textNode2);
-        				box.appendChild(content);
-						message_box.appendChild(box);
-						message_box.scrollTop = message_box.scrollHeight - message_box.clientHeight;
-					}
-					else {
-						let path = message.content;
-						download_image(box, message_box, path);
-					}
-    			});
-			}
-		});
 	  }
 	  else {
       	let message = snapshot.val();
@@ -544,7 +509,42 @@ onAuthStateChanged(auth, (user) => {
 	}
     });
 
-	
+	get(child(dbRef,"/channel/" + channel_id + "/messages/")).then((messages) => {
+		messages = messages.val();
+		let message_keys = Object.keys(messages);
+		if(message_keys.length > 50) {
+			insert_load_more();
+			let short_length = messages_keys.length-50;
+			message_keys.slice(short_length,message_keys.length);
+		}
+		let message_box = document.getElementById("msg-contain");
+		for(let n = 0; n < message_keys.length; n++) {
+			let message = messages[message_keys[n]];
+			  get(child(dbRef, "/users/" + message.creator + "/basic_info")).then((snapshot2) => {
+				let user_data = snapshot2.val();
+				let date = new Date(message.date);
+				let datetime = " | on " + String(date.getMonth()+1) + "/" + String(date.getDate()) + "/" + String(date.getFullYear()) + " at " + String(date.getHours()) + ":" + String(date.getMinutes());
+				let box = document.createElement("div");
+				box.setAttribute("class","message");
+				let username_entry = document.createElement("h4");
+				let textNode = document.createTextNode(user_data.displayName + datetime);
+				username_entry.appendChild(textNode);
+				box.appendChild(username_entry);
+				if (message.type == null) {
+					let content = document.createElement("p");
+					let textNode2 = document.createTextNode(message.content);
+					content.appendChild(textNode2);
+					box.appendChild(content);
+					message_box.appendChild(box);
+					message_box.scrollTop = message_box.scrollHeight - message_box.clientHeight;
+				}
+				else {
+					let path = message.content;
+					download_image(box, message_box, path);
+				}
+			});
+		}
+	});
 	var chat_type_ref = ref(database, "/channel/" + channel_id + "/typing/");
 	onChildAdded(chat_type_ref, (snapshot) => {
 		let data = snapshot.val();
