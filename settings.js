@@ -59,7 +59,7 @@ async function submit_new_info() {
   if(file != null) {
     let user = auth.currentUser;
     let path = "pfp/" + uid + "/" + file.name;
-    upload_image(path,file);
+    await upload_image(path,file);
     let url = await get_url(path);
     updateProfile(user, {photoURL: url}).catch((error) => {
 			success.style.color = "red";

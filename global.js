@@ -22,9 +22,9 @@ function setPicture(e) {
 window.setPicture = setPicture;
 
 
-function upload_image(path,file) {
+async function upload_image(path,file) {
   const storageRef = ref(storage, path);
-  uploadBytes(storageRef, file).then((snapshot) => {
+  await uploadBytes(storageRef, file).then((snapshot) => {
     // console.log(snapshot.val());
     console.log("Submission sucessfull!");
   });
