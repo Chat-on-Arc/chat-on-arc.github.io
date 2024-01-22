@@ -232,6 +232,12 @@ onAuthStateChanged(auth, (user) => {
       setPicture(photoURL);
     }
     arc_direct();
+    let file = document.getElementById("file");
+    file.addEventListener("change", (event) => {
+      let link = URL.createObjectURL(file.files[0]);
+      document.getElementById("settings-pfp").style.background = "url("+ link  + ")";
+      document.getElementById("settings-pfp").style.backgroundSize = "contain";
+    });
     let name_input = document.getElementById("display-name");
     name_input.value = user.displayName;
     let email_input = document.getElementById("email-address");
