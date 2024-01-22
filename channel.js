@@ -514,7 +514,7 @@ onAuthStateChanged(auth, (user) => {
 		let message_keys = Object.keys(messages);
 		if(message_keys.length > 50) {
 			insert_load_more();
-			let short_length = messages_keys.length-50;
+			let short_length = message_keys.length-50;
 			message_keys.slice(short_length,message_keys.length);
 		}
 		let message_box = document.getElementById("msg-contain");
