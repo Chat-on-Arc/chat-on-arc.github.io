@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
-import { getDatabase, set, ref, onValue, get, child, update, onChildAdded, remove, onChildRemoved} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+import { getDatabase, set, ref, onValue, get, child, update, onChildAdded, remove, onChildRemoved, query, limitToLast} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging.js";
 var uid;
 var msg_date;
@@ -416,7 +416,7 @@ function insert_load_more() {
 }
 
 function listen_for_new_msg() {
-	var message_ref = ref(database, "/channel/" + channel_id + "/messages/");
+	var message_ref = query(ref(database, "/channel/" + channel_id + "/messages/"), limitToLast(50));
     onChildAdded(message_ref, (snapshot) => {
 	  console.log("ref triggered")
       	let message = snapshot.val();
