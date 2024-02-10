@@ -419,7 +419,7 @@ function listen_for_new_msg() {
         let textNode = document.createTextNode(user_data.displayName + datetime);
         username_entry.appendChild(textNode);
         box.appendChild(username_entry);
-		if (message.type == null) {
+		if (message.type == "text") {
         	let content = document.createElement("p");
         	let textNode2 = document.createTextNode(message.content);
         	content.appendChild(textNode2);
