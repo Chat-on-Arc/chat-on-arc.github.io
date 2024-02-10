@@ -460,6 +460,11 @@ onAuthStateChanged(auth, (user) => {
        		console.log(data);
 		let input = document.getElementById("messagebox");
 		input.addEventListener("keydown",type_event);
+		let send_button = document.getElementById("send-button");
+		send_button.addEventListener("onclick", () => {
+			let msg = input.value;
+			send(msg,"text");
+		});
 	}
 	   else {
 		let message_box = document.getElementById("msg-contain");
