@@ -273,6 +273,8 @@ function start_upload() {
 }
 window.start_upload = start_upload;
 function send(msg, type) {
+	console.log(msg);
+	console.log(type); 
   	let message_id = Math.floor(Math.random()*1000000);
   	message_id = message_id + 1000000;
   	// let content = document.getElementById("messagebox").value;
@@ -315,6 +317,7 @@ function typing_check() {
 function type_event(e) {
 	if(e.key == "Enter") {
 		let msg = document.getElementById("messagebox").value;
+		console.log(msg);
 		send(msg, "text");
 	}
 	else if (running_listener == false) {
@@ -372,7 +375,7 @@ function manage_direct() {
 	var div = document.getElementById("manage_users");
   	div.style.visibility = "visible";
   	div.innerHTML = "<div style='padding: 10px;'>" + 
-  "<button onclick='block()>Block this user</button></div>";
+  "<button onclick='block()'>Block this user</button></div>";
 }
 window.manage_direct = manage_direct;
 async function arc_direct(e) {
