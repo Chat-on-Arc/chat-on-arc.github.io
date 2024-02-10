@@ -247,36 +247,6 @@ function get_date() {
 	}
   	return String(msg_date.getFullYear()) + month + day + hours + minutes + seconds;
 }
-
-function upload() {
-	let file = document.getElementById("file").files;
-	for(let n = 0; n < file.length; n++) {
-		let date_for_data = new Date();
-		date_for_data = String(date_for_data);
-		let path = "channel/" + channel_id + "/" + file[n].name;
-		upload_image(path,file[n]);
-		let message_data = {
-			type: "image",
-			content: path,
-			date: date_for_data,
-			creator: uid,
-			channel_name: channel_name,
-			displayName: display_name,
-			channel_id: channel_id,
-		};
-		let message_date = get_date();
-		console.log(get_date());
-		let message_id = Math.floor(Math.random()*1000000);
-		message_id = message_id + 1000000;
-		set(ref(database, "/channel/" + channel_id + "/messages/" + message_date + message_id), message_data);
-		let div = document.getElementById("upload");
-		div.innerHTML = '<input type="text" id="messagebox" value="Type here"><button onclick="send()">Send</button><button onclick="start_upload()">Upload</button>';
-		
-	}
-}
-window.upload = upload;
-
-
 function start_upload() {
 	let div = document.getElementById("upload");
 	div.innerHTML = "";
@@ -286,26 +256,37 @@ function start_upload() {
 	input.setAttribute("id","file");
 	div.appendChild(input);
 	let submit_button = document.createElement("button");
-	submit_button.setAttribute("onclick","upload()");
+	submit_button.addEventListener("onclick",() => {
+		let file = document.getElementById("file").files;
+	for(let n = 0; n < file.length; n++) {
+		let path = "channel/" + channel_id + "/" + file[n].name;
+		upload_image(path,file[n]);
+		send(path, "image");
+		let div = document.getElementById("upload");
+		div.innerHTML = '<input type="text" id="messagebox" value="Type here"><button onclick="send()">Send</button><button onclick="start_upload()">Upload</button>';
+	} 
+	});
+	
 	let submit_button_text = document.createTextNode("Submit");
 	submit_button.appendChild(submit_button_text);
 	div.appendChild(submit_button);
 }
 window.start_upload = start_upload;
-function send() {
+function send(msg, type) {
   	let message_id = Math.floor(Math.random()*1000000);
   	message_id = message_id + 1000000;
-  	let content = document.getElementById("messagebox").value;
+  	// let content = document.getElementById("messagebox").value;
   	document.getElementById("messagebox").value = "";
   	msg_date = new Date(); 
   	console.log(msg_date); 
   	let msg_date_2 = String(msg_date);
   	let send_date = get_date();
   	let data = {
+	  type: type,
 	  channel_name: channel_name,
 	  creator: uid,
 	  displayName: display_name,
-	  content: content,
+	  content: msg,
 	  date: msg_date_2,
 	  channel_id: channel_id,
 	  photoURL: photoURL,
@@ -331,8 +312,12 @@ function typing_check() {
 		clearInterval(interval);
 	}
 }
-function type_event() {
-	if (running_listener == false) {
+function type_event(e) {
+	if(e.key == "Enter") {
+		let msg = document.getElementById("messagebox").value;
+		send(msg, "text");
+	}
+	else if (running_listener == false) {
 			console.log("Starting listener");
 			let updates = {};
 			let data = {typing: uid};
