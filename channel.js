@@ -419,7 +419,7 @@ function listen_for_new_msg() {
         let textNode = document.createTextNode(user_data.displayName + datetime);
         username_entry.appendChild(textNode);
         box.appendChild(username_entry);
-		if (message.type == "text") {
+		if (message.type == "text" || message.type == null) {
         	let content = document.createElement("p");
         	let textNode2 = document.createTextNode(message.content);
         	content.appendChild(textNode2);
@@ -427,7 +427,7 @@ function listen_for_new_msg() {
 		message_box.appendChild(box);
 		message_box.scrollTop = message_box.scrollHeight - message_box.clientHeight;
 		}
-		else {
+		else if (message.type == "image") {
 			let path = message.content;
 			download_image(box, message_box, path);
 		}
